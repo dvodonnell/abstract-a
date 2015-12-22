@@ -1,0 +1,19 @@
+{
+  "name": "abstract-a",
+  "version": "1.0.0",
+  "description": "State-Component-Service App Abstraction Library",
+  "main": "src/a.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dvodonnell@github.com/dvodonnell/abstract-a.git"
+  },
+  "author": "Dan O'Donnell <dan@dvoc.ca> (http://dvoc.ca)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dvodonnell/abstract-a/issues"
+  },
+  "homepage": "https://github.com/dvodonnell/abstract-a#readme"
+}
