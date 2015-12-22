@@ -25,24 +25,22 @@
 
                 _appDef['api'] = _appDef.api || {};
 
-                var newApp = function(config, bootstrapper, middleware) {
+                var newApp = function(config, envService, bootstrapper, middleware) {
                     this._config = config;
                     this._container = [];
-                    this._state = null;
+                    this._store = null;
                     this._bootstrapper = bootstrapper || null;
                     this._middleware = middleware || {};
-                    this._hasRun = false;
+                    this._envService = envService;
                     this._initialize();
                 };
 
                 newApp.prototype = {
 
-                    _component : _appDef.component,
                     _service : _appDef.services,
 
                     _initialize : function () {
-                        //TODO middleware
-                        this._state = (_appDef.api.createStore && _appDef.api.createStore) ? _appDef.api.createStore() : null;
+                        this._store = (_appDef.api.storeInitializer && _appDef.api.storeInitializer) ? _appDef.api.storeInitializer() : null;
                     },
 
                     _runMiddleWare : function(key, args) {
@@ -54,9 +52,24 @@
                         }
                     },
 
+                    _render : function() {
+                        if (_appDef.api.renderer) {
+                            _appDef.api.renderer.apply(this, arguments);
+                        }
+                    },
+
+                    run : function() {
+                        if (_appDef.api.runner) {
+                            _appDef.api.runner.apply(this, arguments);
+                        }
+                        if (this._bootstrapper) {
+                            this._bootstrapper.apply(this, arguments);
+                        }
+                    },
+
                     mount : function(container) {
                         this._container.push(container);
-                        this.renderElement(this.createElement(), container);
+                        this._render(container);
                     },
 
                     unmount : function() {
@@ -69,55 +82,34 @@
                         }
                     },
 
-                    run: function() {
-                        if (_appDef.bootstrapper) {
-                            _appDef.bootstrapper.apply(this, arguments);
-                        }
-                        if (this._bootstrapper) {
-                            this._bootstrapper.apply(this, arguments);
-                        }
-                    },
-
                     getConfig : function () {
                         return this._config;
                     },
 
-                    setState : function(key, value) {
-                        this._state.set(key, value);
+                    setData : function(key, value) {
+                        this._store.set(key, value);
                     },
 
-                    getState : function (key) {
-                        return this._state.get(key);
+                    getData : function (key) {
+                        return this._store.get(key);
+                    },
+
+                    getStore : function() {
+                        return this._store;
                     },
 
                     subscribe : function (key, callback) {
                         this._runMiddleWare('beforeSubscribe', [callback]);
-                        this._state.subscribe(key, callback);
+                        this._store.subscribe(key, callback);
                         this._runMiddleWare('afterSubscribe', [callback]);
-                    },
-
-                    constructComponentStateObject : function() {
-                        var self = this;
-                        return (_appDef.api.constructComponentStateObject) ? _appDef.api.constructComponentStateObject(this.getState(), this.getConfig) : {state : this._state};
-                    },
-
-                    createElement : function () {
-                        this._runMiddleWare('beforeCreateElement');
-                        var newEl = (_appDef.api.createElement) ? _appDef.api.createElement(this._component, this.constructComponentStateObject()) : new this._component(this.constructComponentStateObject());
-                        this._runMiddleWare('afterCreateElement', [newEl]);
-                        return newEl;
-                    },
-
-                    renderElement : function(element, container) {
-                        if (_appDef.api.renderElement) {
-                            _appDef.api.renderElement(element, container);
-                        } else {
-                            container.appendChild(element.el);
-                        }
                     },
 
                     getService : function(key) {
                         return (_appDef.api.getService) ? _appDef.api.getService(this._service, key) : this._service[key];
+                    },
+
+                    getEnvironmentService : function() {
+                        return this._envService;
                     }
 
                 };
