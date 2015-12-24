@@ -105,7 +105,7 @@
                     },
 
                     getService : function(key) {
-                        return (_appDef.api.getService) ? _appDef.api.getService(this._service, key) : this._service[key];
+                        return _appDef.services[key];
                     },
 
                     getEnvironmentService : function() {
