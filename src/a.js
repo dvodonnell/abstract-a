@@ -28,6 +28,7 @@
                 var newApp = function(config, envService, bootstrapper, middleware) {
                     this._config = config;
                     this._container = [];
+                    this._connections = {};
                     this._store = null;
                     this._bootstrapper = bootstrapper || null;
                     this._middleware = middleware || {};
@@ -106,6 +107,16 @@
 
                     getService : function(key) {
                         return _appDef.services[key];
+                    },
+
+                    createConnection : function(key, config, instanceKey) {
+                        var conn = new _appDef.connections[key](config);
+                        this._connections[instanceKey || key] = conn;
+                        return conn;
+                    },
+
+                    getConnection : function(key) {
+                        return this._connections[key];
                     },
 
                     getEnvironmentService : function() {
