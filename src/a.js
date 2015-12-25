@@ -24,9 +24,10 @@
             return (function(_appDef) {
 
                 _appDef['api'] = _appDef.api || {};
+                _appDef['config'] = _appDef.config || {};
 
                 var newApp = function(config, envService, bootstrapper, middleware) {
-                    this._config = config;
+                    this._config = Object.assign({}, _appDef.config, config || {});
                     this._container = [];
                     this._connections = {};
                     this._store = null;
