@@ -1,6 +1,6 @@
 {
   "name": "abstract-a",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "State-Component-Service App Abstraction Library",
   "main": "src/a.js",
   "scripts": {
