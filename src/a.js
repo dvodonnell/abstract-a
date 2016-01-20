@@ -40,6 +40,7 @@
                 newApp.prototype = {
 
                     _service : _appDef.services,
+                    _action : _appDef.actions,
 
                     _initialize : function () {
                         this._store = (_appDef.api.storeInitializer && _appDef.api.storeInitializer) ? _appDef.api.storeInitializer() : null;
@@ -110,6 +111,10 @@
                         return _appDef.services[key];
                     },
 
+                    getServices : function() {
+                        return _appDef.services;
+                    },
+
                     createConnection : function(key, config, instanceKey) {
                         var conn = new _appDef.connections[key](config);
                         this._connections[instanceKey || key] = conn;
@@ -122,6 +127,18 @@
 
                     getEnvironmentService : function() {
                         return this._envService;
+                    },
+
+                    createAction : function(key, args) {
+                        return this._action[key].apply(this, args);
+                    },
+
+                    getActions : function() {
+                        return this._action;
+                    },
+
+                    getAction : function(key) {
+                        return this._action[key];
                     }
 
                 };
